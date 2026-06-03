@@ -6,8 +6,8 @@ int main() {
     cout << "   PROJETO DE EQUIPE INICIADO!   " << endl;
     cout << "=================================" << endl;
     cout << "Hugo aqui"<<endl;
-    
     return 0;
 }
 
 //lalalala
+//O JOGOOOOOOOOO
