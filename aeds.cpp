@@ -8,6 +8,3 @@ int main() {
     cout << "Hugo aqui"<<endl;
     return 0;
 }
-
-//lalalala
-//O JOGOOOOOOOOO
