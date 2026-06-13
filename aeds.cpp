@@ -5,23 +5,37 @@
 #include <ctime> // Relaciona o horário atual do pc com o tempo do jogo
 using namespace std;
 
-enum Funcao {
+
+// ================= ENUMS =================
+
+enum Personagem { // Dafny(D): Mudei o nome de "Função" para "Personagem" para não haver nomes repetidos durante o código. 
     ASSASSINO,
     MEDICO,
     VIDENTE,
     CIDADAO
 };
 
-struct Jogador{
+enum EstadoJogo { // Controla em qual etapa da partida o sistema está.
+    MENU,
+    DISTRIBUICAO,
+    NOITE,
+    DIA,
+    VOTACAO,
+    FIM
+};
+
+// ================= STRUCTS =================
+
+struct Jogador{ // Armazena todas as informações de cada jogador.
     string nome;
-    Funcao funcao;
+    Personagem funcao;
     bool vivo;
     int votosRecebidos;
     bool protegido;
     int suspeita;
 };
 
-struct HistoricoRodada{
+struct HistoricoRodada{ // Serve para registrar tudo o que aconteceu em cada rodada.
     int rodada;
     string noite;
     string dia;
