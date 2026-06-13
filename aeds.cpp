@@ -42,9 +42,9 @@ struct HistoricoRodada{ // Serve para registrar tudo o que aconteceu em cada rod
     string votacao;
 };
 
-//Possíveis funções que vamos utilizar e desenvolver
+//Possíveis funções que vamos utilizar e desenvolver (PROTÓTIPOS)
 
-void menuPrincipal();
+void menuPrincipal(); // (D): Feito! 
 
 void cadastrarJogadores();
 
@@ -70,6 +70,8 @@ void relatorioFinal();
 
 void limparPartida();
 
+// ================= MAIN =================
+
 int main() {
 
     srand(time(NULL)); // Permite a mudança de funções entre as partidas
@@ -78,47 +80,89 @@ int main() {
 int quantidadeJogadores;
 int quantidadeRodadas;
 
-void menuPrincipal(){
-    
-    int opcao;
-    do{
+    menuPrincipal();
 
-    cout << "\n ===== CIDADE DORME =====\n";
-    cout << " 1 - Cadastrar jogadores \n";
-    cout << " 2 - Iniciar partida \n";
-    cout << " 3 - Regras \n";
-    cout << " 4 - Histórico da última partida\n";
-    cout << " 5 - Sair \n";
-
-    cout << "\n Opção: ";
-    cin >> opcao;
-
-    switch(opcao){ //switch serve para executar diferentes cenários que dependem do valor informado da variável
-        case 1: //caso definido pelo valor da variável 
-        cadastrarJogadores(); //encaixar...
-        break; //break encerra o bloco, impedindo o algoritmo de passar automaticamente para os outros casos
-
-        case 2:
-        iniciarPartida(); //encaixar...
-        break; 
-
-        case 3:
-        mostrarRegras(); //encaixar...
-        break;
-
-        case 4:
-        mostrarHistorico(); //encaixar...
-        break;
-
-        case 5:
-        cout<<"\nEncerrando...\n";
-        break;
-
-        defalt: //executa se nenhum caso for verdadeiro
-        cout<<"\nOpção inválida!\n";
-    }
-
-}while (opcao != 5);
-}
 return 0;
+}
+
+// ================= MENU =================
+/*
+OBS: A implementação da função menuPrincipal() está após a main() porque seu
+protótipo foi declarado anteriormente. Isso melhora a organização do código
+e mantém a função principal mais limpa e fácil de entender.
+*/
+
+void menuPrincipal(){
+    int opcao; 
+
+    do {
+
+        cout << "\n====== CIDADE DORME ======\n";
+        cout << "1 - Cadastrar jogadores\n"; 
+        cout << "2 - Iniciar partida\n";
+        cout << "3 - Regras\n";
+        cout << "4 - Historico da ultima partida\n";
+        cout << "5 - Sair\n";
+
+        cout << "\nEscolha uma opcao: ";
+        cin >> opcao;
+
+        switch(opcao){
+
+            case 1:
+                cadastrarJogadores(); 
+                break;
+            
+            case 2: 
+                iniciarPartida();
+                break;
+            
+            case 3: 
+                mostrarRegras();
+                break; 
+            
+            case 4: 
+                mostrarHistorico();
+                break;
+                
+            case 5:
+                cout << "\nEncerrando programa...\n"; 
+                break; 
+            
+            default:
+                cout << "\nOpcao invalida!\n"; 
+        }
+    
+    } while (opcao != 5);
+};
+
+
+// ================= FUNÇÕES TEMPORÁRIAS =================
+/*
+(D)OBS: As funções abaixo foram criadas temporariamente para permitir a compilação
+e os testes iniciais do menu principal.
+
+Durante o desenvolvimento do projeto, essas implementações simples serão
+substituídas pelas versões completas, responsáveis por executar as regras,
+ações e mecânicas do jogo "Cidade Dorme".
+
+A utilização de funções temporárias facilita a construção do programa por
+etapas, permitindo testar cada parte do sistema antes da implementação final.
+*/
+
+
+void cadastrarJogadores() {
+    cout << "\n[Cadastro de jogadores ainda nao implementado]\n";
+}
+
+void iniciarPartida() {
+    cout << "\n[Partida ainda nao implementada]\n";
+}
+
+void mostrarRegras() {
+    cout << "\n[Regras ainda nao implementadas]\n";
+}
+
+void mostrarHistorico() {
+    cout << "\n[Historico ainda nao implementado]\n";
 }
