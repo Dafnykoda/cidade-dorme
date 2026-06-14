@@ -42,6 +42,23 @@ struct HistoricoRodada{ // Serve para registrar tudo o que aconteceu em cada rod
     string votacao;
 };
 
+// ================= VARIÁVEIS GLOBAIS =================
+
+/*
+OBS: Variáveis globais utilizadas para armazenar informações que serão
+compartilhadas entre várias funções do programa, como jogadores,
+histórico de rodadas e controle da partida.
+*/
+
+const int MAX_JOGADORES = 10;
+
+Jogador jogadores[MAX_JOGADORES];
+
+HistoricoRodada historico[30];
+
+int quantidadeJogadores = 0;
+int quantidadeRodadas = 0;
+
 //Possíveis funções que vamos utilizar e desenvolver (PROTÓTIPOS)
 
 void menuPrincipal(); // (D): Feito! 
@@ -75,10 +92,6 @@ void limparPartida();
 int main() {
 
     srand(time(NULL)); // Permite a mudança de funções entre as partidas
-
-    HistoricoRodada historico[30];
-int quantidadeJogadores;
-int quantidadeRodadas;
 
     menuPrincipal();
 
@@ -114,7 +127,16 @@ void menuPrincipal(){
                 break;
             
             case 2: 
-                iniciarPartida();
+                /*
+                OBS (D): Validação para impedir que uma partida seja iniciada sem que os
+                jogadores tenham sido cadastrados previamente.
+                */
+                if (quantidadeJogadores == 0) {
+                    cout << "\nCadastre os jogadores antes de iniciar a partida!\n";
+                }
+                else {
+                    iniciarPartida();
+                }
                 break;
             
             case 3: 
@@ -136,6 +158,56 @@ void menuPrincipal(){
     } while (opcao != 5);
 };
 
+void cadastrarJogadores() {
+/*
+OBS (D): Esta função realiza o cadastro dos participantes da partida.
+
+O sistema solicita a quantidade de jogadores, valida se o valor está
+dentro do limite permitido (entre 6 e 10 jogadores) e registra os nomes
+informados.
+
+Além disso, inicializa os atributos de cada jogador para garantir que
+todos iniciem a partida com os mesmos estados padrão.
+*/
+
+    cout << "\n====== CADASTRO DE JOGADORES ======\n";
+
+    do
+    {
+        cout<<"Quantidade de jogadores (6 a 10): ";
+        cin>> quantidadeJogadores; 
+
+        if (quantidadeJogadores<6||quantidadeJogadores>10) {
+            cout<<"\nQuantidade invalida! Digite entre 6 a 10 jogadores.\n";
+        }
+        
+    } while (quantidadeJogadores<6||quantidadeJogadores>10);
+
+    cin.ignore(); 
+
+    for (int i=0; i<quantidadeJogadores; i++) {
+        
+        cout<<"\nNome do jogador "<<i+1<<": "; 
+        getline(cin, jogadores[i].nome); 
+
+        jogadores[i].vivo=true;
+        jogadores[i].votosRecebidos=0;
+        jogadores[i].protegido=false; 
+        jogadores[i].suspeita=0; 
+
+    }
+    
+    cout<<"\nJogadores cadastrados com sucesso!\n";
+
+    cout << "\n===== JOGADORES CADASTRADOS =====\n";
+
+    for(int i = 0; i < quantidadeJogadores; i++) {
+    
+        cout << i + 1 << " - " << jogadores[i].nome << endl;
+    }
+    
+}
+
 
 // ================= FUNÇÕES TEMPORÁRIAS =================
 /*
@@ -149,11 +221,6 @@ ações e mecânicas do jogo "Cidade Dorme".
 A utilização de funções temporárias facilita a construção do programa por
 etapas, permitindo testar cada parte do sistema antes da implementação final.
 */
-
-
-void cadastrarJogadores() {
-    cout << "\n[Cadastro de jogadores ainda nao implementado]\n";
-}
 
 void iniciarPartida() {
     cout << "\n[Partida ainda nao implementada]\n";
