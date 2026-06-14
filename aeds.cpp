@@ -63,7 +63,7 @@ int quantidadeRodadas = 0;
 
 void menuPrincipal(); // (D): Feito! 
 
-void cadastrarJogadores();
+void cadastrarJogadores(); //(D): Feito!
 
 void iniciarPartida();
 
