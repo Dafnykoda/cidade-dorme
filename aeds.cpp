@@ -61,15 +61,15 @@ int quantidadeRodadas = 0;
 
 //Possíveis funções que vamos utilizar e desenvolver (PROTÓTIPOS)
 
-void menuPrincipal(); // (D): Feito! 
+ void menuPrincipal(); // (D): Feito! 
 
-void cadastrarJogadores(); //(D): Feito!
+void cadastrarJogadores(); // (D): Feito!
 
-void iniciarPartida();
+void iniciarPartida(); //Marcelo: Temporario
 
-void distribuirFuncoes();
+void distribuirFuncoes();  // Marcelo: Feito!
 
-void mostrarFuncaoJogadores();
+void mostrarFuncaoJogadores();  // Marcelo: Feito!
 
 void executarNoite();
 
@@ -208,6 +208,89 @@ todos iniciem a partida com os mesmos estados padrão.
     
 }
 
+    string nomeFuncao(Personagem funcao) { //Marcelo: Funcao string criada para converter enum em texto
+
+        switch(funcao) {
+
+            case ASSASSINO:
+                return "Assassino";
+
+            case MEDICO:
+                return "Medico";
+
+            case VIDENTE:
+                return "Vidente";
+
+            case CIDADAO:
+                return "Cidadao";
+
+            default:
+                return "Desconhecido";
+        }
+    }
+
+    void distribuirFuncoes() { //Marcelo: Cria vetor temporario c/ todas funções -> Embaralha -> Copia para jogadores
+
+        Personagem funcoes[MAX_JOGADORES];
+
+        int pos = 0;
+
+        // Funcoes obrigatorias
+        funcoes[pos++] = ASSASSINO;
+        funcoes[pos++] = ASSASSINO;
+
+        funcoes[pos++] = MEDICO;
+        funcoes[pos++] = MEDICO;
+
+        funcoes[pos++] = VIDENTE;
+
+        // Completa com cidadaos
+        while(pos < quantidadeJogadores) {
+            funcoes[pos++] = CIDADAO;
+        }
+
+        // Embaralhamento
+        for(int i = 0; i < quantidadeJogadores; i++) {
+
+            int sorteio = rand() % quantidadeJogadores;
+
+            Personagem temp = funcoes[i];
+            funcoes[i] = funcoes[sorteio];
+            funcoes[sorteio] = temp;
+        }
+
+        // Distribui para os jogadores
+        for(int i = 0; i < quantidadeJogadores; i++) {
+            jogadores[i].funcao = funcoes[i];
+        }
+}
+
+void mostrarFuncaoJogadores() { //Marcelo: Cada jogador vê sua própia função.
+
+    cin.ignore();
+
+    for(int i = 0; i < quantidadeJogadores; i++) {
+
+        cout << "\n=================================\n";
+        cout << "Jogador: " << jogadores[i].nome << endl;
+
+        cout << "Pressione ENTER para ver sua funcao...";
+        cin.get();
+
+        cout << "\nSua funcao e: "
+             << nomeFuncao(jogadores[i].funcao)
+             << endl;
+
+        cout << "\nPressione ENTER para esconder...";
+        cin.get();
+
+       #ifdef _WIN32 //limpa tela para o prox jogador não ver funcao do jogador anterior.
+        system("cls");
+    #else
+        system("clear");
+    #endif
+    }
+}
 
 // ================= FUNÇÕES TEMPORÁRIAS =================
 /*
@@ -223,7 +306,26 @@ etapas, permitindo testar cada parte do sistema antes da implementação final.
 */
 
 void iniciarPartida() {
-    cout << "\n[Partida ainda nao implementada]\n";
+
+    cout << "\n===== INICIANDO PARTIDA =====\n";
+
+    quantidadeRodadas = 0;
+
+    distribuirFuncoes();
+
+    mostrarFuncaoJogadores();
+
+    cout << "\nTodas as funcoes foram distribuidas!\n";
+    cout << "A partida esta pronta para comecar.\n";
+
+    // futuramente:
+    // while(!verificarVitoria())
+    // {
+    //     executarNoite();
+    //     executarDia();
+    //     realizarVotacao();
+    // }
+
 }
 
 void mostrarRegras() {
