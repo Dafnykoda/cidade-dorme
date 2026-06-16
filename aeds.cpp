@@ -71,11 +71,11 @@ void distribuirFuncoes();  // Marcelo: Feito!
 
 void mostrarFuncaoJogadores();  // Marcelo: Feito!
 
-void executarNoite();
+void executarNoite(); 
 
-void executarDia(); // (A): Feito!
+void executarDia(); 
 
-void realizarVotacao();
+void realizarVotacao(); // (A):
 
 bool verificarVitoria(); // (D): Feito!
 
@@ -85,7 +85,7 @@ void mostrarRegras(); // (A): Feito!
 
 void relatorioFinal();
 
-void limparPartida();
+void limparPartida(); // (A): Feito!
 
 // ================= MAIN =================
 
@@ -350,6 +350,61 @@ bool verificarVitoria() {
     return false;
 }
 
+void mostrarRegras() { 
+    
+    #ifdef _WIN32 
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
+    // (A): Regras e Explicacao.
+    
+    cout << "======== REGRAS DO JOGO: CIDADE DORME ======== \n\n";
+    
+    cout << "  OBJETIVO:\n";
+    cout << "  - Cidadaos, Medicos e Videntes: Devem descobrir\n";
+    cout << "    quem sao os assassinos e elimina-los na votacao.\n";
+    cout << "  - Assassinos: Devem eliminar os outros jogadores\n";
+    cout << "    ate que fiquem em numero igual ou maior que eles.\n\n";
+
+    cout << "--------------------------------------------------\n";
+    
+    cout << "  PERSONAGENS:\n";
+    cout << "  * ASSASSINO: Acorda na noite e escolhe alguem para matar.\n";
+    cout << "  * MEDICO: Acorda na noite e escolhe alguem para salvar.\n";
+    cout << "  * VIDENTE: Acorda na noite e descobre a funcao de alguem.\n";
+    cout << "  * CIDADAO: Nao acorda a noite, apenas vota durante o dia.\n\n";
+
+    cout << "--------------------------------------------------\n";
+
+    cout << "  A RODADA:\n";
+    cout << "  1o - NOITE: Todos fecham os olhos. O sistema chama as\n";
+    cout << "       funcoes especiais uma por uma para agirem em segredo.\n";
+    cout << "  2o - DIA: A cidade acorda e descobre se houve alguma morte.\n";
+    cout << "  3o - VOTACAO: Os jogadores discutem e votam para eliminar\n";
+    cout << "       um suspeito. O mais votado sai do jogo.\n\n";
+
+    cout << "==================================================\n";
+    
+    cout << "Pressione ENTER para voltar ao menu principal.";
+    cin.ignore(); 
+    cin.get();    
+}
+void limparPartida() {
+    
+    // (A): Limpa os dados da partida anterior.
+    
+    quantidadeRodadas = 0;
+
+    for(int i = 0; i < quantidadeJogadores; i++) {
+        jogadores[i].vivo = true;
+        jogadores[i].votosRecebidos = 0;
+        jogadores[i].protegido = false;
+        jogadores[i].suspeita = 0;
+    }
+}
+
 // ================= FUNÇÕES TEMPORÁRIAS =================
 /*
 (D)OBS: As funções abaixo foram criadas temporariamente para permitir a compilação
@@ -394,49 +449,6 @@ void iniciarPartida() {
     verificarVitoria();
 
 }
-
-void mostrarRegras() { 
-    
-    #ifdef _WIN32 
-        system("cls");
-    #else
-        system("clear");
-    #endif
-
-    // (A): Regras e Explicacao.
-    
-    cout << "======== REGRAS DO JOGO: CIDADE DORME ======== \n\n";
-    
-    cout << "  OBJETIVO:\n";
-    cout << "  - Cidadaos, Medicos e Videntes: Devem descobrir\n";
-    cout << "    quem sao os assassinos e elimina-los na votacao.\n";
-    cout << "  - Assassinos: Devem eliminar os outros jogadores\n";
-    cout << "    ate que fiquem em numero igual ou maior que eles.\n\n";
-
-    cout << "--------------------------------------------------\n";
-    
-    cout << "  PERSONAGENS:\n";
-    cout << "  * ASSASSINO: Acorda na noite e escolhe alguem para matar.\n";
-    cout << "  * MEDICO: Acorda na noite e escolhe alguem para salvar.\n";
-    cout << "  * VIDENTE: Acorda na noite e descobre a funcao de alguem.\n";
-    cout << "  * CIDADAO: Nao acorda a noite, apenas vota durante o dia.\n\n";
-
-    cout << "--------------------------------------------------\n";
-
-    cout << "  A RODADA:\n";
-    cout << "  1o - NOITE: Todos fecham os olhos. O sistema chama as\n";
-    cout << "       funcoes especiais uma por uma para agirem em segredo.\n";
-    cout << "  2o - DIA: A cidade acorda e descobre se houve alguma morte.\n";
-    cout << "  3o - VOTACAO: Os jogadores discutem e votam para eliminar\n";
-    cout << "       um suspeito. O mais votado sai do jogo.\n\n";
-
-    cout << "==================================================\n";
-    
-    cout << "Pressione ENTER para voltar ao menu principal.";
-    cin.ignore(); 
-    cin.get();    
-}
-
 
 void mostrarHistorico() {
     cout << "\n[Historico ainda nao implementado]\n";
