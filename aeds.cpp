@@ -77,11 +77,11 @@ int lerInteiro();            // Marcelo: trata entrada inválida (letras etc)
 
 void limparTela(); //Marcelo
 
-void executarNoite(); // Tiago
+void executarNoite(); // [T]:
 
-void executarDia(); // Tiago
+void executarDia(); // [T]:
 
-void realizarVotacao(); // Tiago
+void realizarVotacao(); // [T]:
 
 bool verificarVitoria(); // (D): Feito!
 
@@ -279,13 +279,13 @@ void mostrarFuncaoJogadores() { //Marcelo: Cada jogador vê sua própia função
       cout << "\nSua funcao e: " << nomeFuncao(jogadores[i].funcao) << "\n";
 
                if (jogadores[i].funcao == ASSASSINO)
-            cout << "[Dica] Voce e um Assassino. Na noite, escolha uma vitima.\n";
+            cout << "Voce e um Assassino. Na noite, escolha uma vitima.\n";
         else if (jogadores[i].funcao == MEDICO)
-            cout << "[Dica] Voce e o Medico. Na noite, escolha alguem para proteger.\n";
+            cout << "Voce e o Medico. Na noite, escolha alguem para proteger.\n";
         else if (jogadores[i].funcao == VIDENTE)
-            cout << "[Dica] Voce e o Vidente. Na noite, investigue a funcao de alguem.\n";
+            cout << "Voce e o Vidente. Na noite, investigue a funcao de alguem.\n";
         else
-            cout << "[Dica] Voce e um Cidadao. Use bem seu voto durante o dia!\n";
+            cout << "Voce e um Cidadao. Use bem seu voto durante o dia!\n";
  
         cout << "\nPressione ENTER para esconder e passar para o proximo...";
         cin.get();
@@ -298,27 +298,27 @@ void mostrarFuncaoJogadores() { //Marcelo: Cada jogador vê sua própia função
 
 
 void executarNoite() {
-    // Zera estados da rodada
+    //[T]: Zera estados da rodada
     for (int i = 0; i < quantidadeJogadores; i++) {
         jogadores[i].protegido = false;
         jogadores[i].votosRecebidos = 0; // votos serão usados na votação
         // suspeita pode ser mantida/alterada se você quiser
     }
 
-    // Estrutura de texto para histórico
+    //[T]: Estrutura de texto para histórico
     historico[quantidadeRodadas].rodada = quantidadeRodadas;
     historico[quantidadeRodadas].noite.clear();
 
     cout << "\n====== NOITE " << quantidadeRodadas << " ======\n";
     cout << "A cidade adormece...\n";
 
-    // MEDICO: protege alguém (se vivo)
+    //[T]: MEDICO: protege alguém (se vivo)
 
       for (int i = 0; i < quantidadeJogadores; i++) {
         if (!jogadores[i].vivo || jogadores[i].funcao != MEDICO) continue;
  
         limparTela();
-        cout << "\n[ MEDICO ] " << jogadores[i].nome << ", e sua vez.\n";
+        cout << "\nVez de " << jogadores[i].nome << "\n";
         cout << "Pressione ENTER para agir em segredo...";
         cin.get();
  
@@ -348,14 +348,16 @@ void executarNoite() {
  
 
     // ----- ASSASSINOS -----
-    /*
-    Cada assassino vivo escolhe individualmente um alvo.
+
+    /* 
+    [T]: Cada assassino vivo escolhe individualmente um alvo.
     A resolução segue os 4 casos da proposta:
     Caso 1: nenhum alvo protegido → sorteio entre os alvos, 1 morre
     Caso 2: apenas um alvo protegido → o não protegido morre
     Caso 3: ambos protegidos → ninguém morre
     Caso 4: ambos escolheram o mesmo alvo → ataque prioritário
     */
+
     int alvosAssassinos[2] = {-1, -1};
     int contAssassinos = 0;
  
@@ -364,7 +366,7 @@ void executarNoite() {
         if (contAssassinos >= 2) break;
  
         limparTela();
-        cout << "\n[ ASSASSINO ] " << jogadores[i].nome << ", e sua vez.\n";
+        cout << "\nVez de " << jogadores[i].nome << "\n";
         cout << "Pressione ENTER para agir em segredo...";
         cin.get();
  
@@ -390,7 +392,7 @@ void executarNoite() {
         limparTela();
     }
  
-    // Resolução dos ataques
+    //[T]: Resolução dos ataques
     int eliminado = -1;
  
     if (contAssassinos == 1) {
@@ -409,16 +411,16 @@ void executarNoite() {
             bool prot2 = jogadores[alvo2].protegido;
  
             if (!prot1 && !prot2) {
-                // Caso 1: sorteia
+                //[T]: Caso 1: sorteia
                 eliminado = alvosAssassinos[rand() % 2];
             } else if (!prot1) {
-                // Caso 2
+                //[T]: Caso 2
                 eliminado = alvo1;
             } else if (!prot2) {
-                // Caso 2
+                //[T]: Caso 2
                 eliminado = alvo2;
             }
-            // Caso 3: ambos protegidos → eliminado permanece -1
+            //[T]: Caso 3: ambos protegidos → eliminado permanece -1
         }
     }
  
@@ -436,7 +438,7 @@ void executarNoite() {
         if (!jogadores[i].vivo || jogadores[i].funcao != VIDENTE) continue;
  
         limparTela();
-        cout << "\n[ VIDENTE ] " << jogadores[i].nome << ", e sua vez.\n";
+        cout << "\nVez de" << jogadores[i].nome << "\n";
         cout << "Pressione ENTER para agir em segredo...";
         cin.get();
  
@@ -465,13 +467,12 @@ void executarNoite() {
         cout << "\nPressione ENTER para ocultar...";
         cin.get();
         limparTela();
-        break; // só existe 1 vidente
+        break; //[T]: só existe 1 vidente
     }
 }
 
 // ================= DIA =================
-// ================= DIA =================
- 
+
 void executarDia() {
     historico[quantidadeRodadas].dia.clear();
  
@@ -479,11 +480,11 @@ void executarDia() {
     cout << "\n====== DIA " << quantidadeRodadas << " ======\n";
     cout << "A cidade acorda...\n\n";
  
-    // Narra resultado da noite
+    //[T]: Narra resultado da noite
     cout << "[ RESULTADO DA NOITE ]\n";
     cout << historico[quantidadeRodadas].noite;
  
-    // Mostra jogadores vivos
+    //[T]: Mostra jogadores vivos
     int vivos = 0;
     cout << "\n[ JOGADORES VIVOS ]\n";
     for (int i = 0; i < quantidadeJogadores; i++) {
@@ -494,7 +495,7 @@ void executarDia() {
     }
     cout << "\nTotal: " << vivos << " jogadores vivos.\n";
  
-    // Mostra eliminados com função revelada
+    //[T]: Mostra eliminados com função revelada
     cout << "\n[ JOGADORES ELIMINADOS ]\n";
     bool algum = false;
     for (int i = 0; i < quantidadeJogadores; i++) {
@@ -513,120 +514,130 @@ void executarDia() {
     cin.get();
 }
 
+// ================= VOTAÇÃO =================
 
 void realizarVotacao() {
+    /*[T]:
+    Cada jogador vivo vota manualmente em outro jogador vivo.
+    O mais votado é eliminado. Em empate, sorteio entre os empatados.
+    */
     historico[quantidadeRodadas].votacao.clear();
+    
+ for (int i = 0; i < quantidadeJogadores; i++) {
+        if (!jogadores[i].vivo) continue;
 
+    limparTela();
     cout << "\n====== VOTACAO " << quantidadeRodadas << " ======\n";
 
-    // Reset votos
-    for (int i = 0; i < quantidadeJogadores; i++) {
+        // Reset votos
+        for (int i = 0; i < quantidadeJogadores; i++)
         jogadores[i].votosRecebidos = 0;
+        
+        cout << "\nJogadores disponiveis para votar:\n";
+        for (int j = 0; j < quantidadeJogadores; j++)
+            if (jogadores[j].vivo && j != i)
+                cout << j + 1 << " - " << jogadores[j].nome << "\n";
+
+        int escolha;
+        do {
+            cout << "\n" << jogadores[i].nome << ", vote em (numero): ";
+            escolha = lerInteiro() - 1;
+            if (escolha < 0 || escolha >= quantidadeJogadores || !jogadores[escolha].vivo || escolha == i)
+                cout << "Voto invalido. Tente novamente.\n";
+            else
+                break;
+        } while (true);
+
+        jogadores[escolha].votosRecebidos++;
+
+        cout << "\nVoto registrado! Pressione ENTER para ocultar...";
+        cin.get();
+        limparTela();
     }
 
-    // Cada jogador vivo vota automaticamente em outro vivo aleatório
-    for (int votante = 0; votante < quantidadeJogadores; votante++) {
-        if (!jogadores[votante].vivo) continue;
+    // Apura resultado
+    cout << "\n[ RESULTADO DA VOTACAO ]\n";
 
-        int alvo = -1;
-        while (alvo == -1 || !jogadores[alvo].vivo || alvo == votante) {
-            alvo = rand() % quantidadeJogadores;
-        }
-        jogadores[alvo].votosRecebidos++;
+    int maxVotos = 0;
+    for (int i = 0; i < quantidadeJogadores; i++)
+        if (jogadores[i].vivo && jogadores[i].votosRecebidos > maxVotos)
+            maxVotos = jogadores[i].votosRecebidos;
+
+    // Coleta empatados
+    int empatados[MAX_JOGADORES];
+    int contEmpatados = 0;
+    for (int i = 0; i < quantidadeJogadores; i++)
+        if (jogadores[i].vivo && jogadores[i].votosRecebidos == maxVotos)
+            empatados[contEmpatados++] = i;
+
+    // Placar
+    for (int i = 0; i < quantidadeJogadores; i++)
+        if (jogadores[i].vivo)
+            cout << jogadores[i].nome << ": " << jogadores[i].votosRecebidos << " voto(s)\n";
+
+    int eliminado;
+    string registroVotacao = "";
+
+    if (contEmpatados > 1) {
+        cout << "\nEmpate! Sorteando entre os mais votados...\n";
+        eliminado = empatados[rand() % contEmpatados];
+        registroVotacao = "Empate. ";
+    } else {
+        eliminado = empatados[0];
     }
 
-    // Encontrar maior votação
-    int maior = -1;
-    for (int i = 0; i < quantidadeJogadores; i++) {
-        if (jogadores[i].vivo && jogadores[i].votosRecebidos > maior) {
-            maior = jogadores[i].votosRecebidos;
-        }
-    }
+    jogadores[eliminado].vivo = false;
+    registroVotacao += jogadores[eliminado].nome +
+        " eliminado na votacao (" + nomeFuncao(jogadores[eliminado].funcao) + ").";
 
-    // Possíveis empatados
-    int empateIndices[MAX_JOGADORES];
-    int qtdEmpate = 0;
-    for (int i = 0; i < quantidadeJogadores; i++) {
-        if (jogadores[i].vivo && jogadores[i].votosRecebidos == maior) {
-            empateIndices[qtdEmpate++] = i;
-        }
-    }
+    cout << "\n>>> " << jogadores[eliminado].nome
+         << " foi eliminado! Funcao revelada: "
+         << nomeFuncao(jogadores[eliminado].funcao) << " <<<\n";
 
-    // Desempate aleatório
-    int escolhido = empateIndices[rand() % qtdEmpate];
-    jogadores[escolhido].vivo = false;
+    historico[quantidadeRodadas].votacao = registroVotacao;
 
-    // Montar histórico
-    historico[quantidadeRodadas].votacao += "Resultado da votacao:\n";
-    for (int i = 0; i < quantidadeJogadores; i++) {
-        if (jogadores[i].votosRecebidos > 0) {
-            historico[quantidadeRodadas].votacao +=
-                " - " + jogadores[i].nome + ": " + to_string(jogadores[i].votosRecebidos) + " voto(s)\n";
-        }
-    }
-    historico[quantidadeRodadas].votacao +=
-        "Eliminado no dia: " + jogadores[escolhido].nome + ".\n";
-
-    cout << historico[quantidadeRodadas].votacao;
+    cout << "\nPressione ENTER para continuar...";
+    cin.get();
 }
 
+// ================= VERIFICAR VITÓRIA =================
+
 bool verificarVitoria() {
-
-    /*
-    Esta função verifica se alguma das condições de vitória do jogo foi atingida.
-
-    Vitória dos cidadãos:
-    - Ocorre quando todos os assassinos são eliminados.
-
-    Vitória dos assassinos:
-    - Ocorre quando a quantidade de assassinos vivos é igual ou superior à quantidade dos demais jogadores vivos.
-
-    A função retorna:
-    true  -> partida encerrada.
-    false -> partida continua.
+  /*
+    Vitória dos cidadãos: todos os assassinos eliminados.
+    Vitória dos assassinos: assassinos >= demais jogadores vivos.
+    Retorna true se a partida acabou.
     */
-
     int assassinosVivos = 0;
     int outrosVivos = 0;
 
-    for(int i = 0; i < quantidadeJogadores; i++) {
-
-        if(jogadores[i].vivo) {
-
-            if(jogadores[i].funcao == ASSASSINO) {
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo) {
+            if (jogadores[i].funcao == ASSASSINO)
                 assassinosVivos++;
-            }
-            else {
+            else
                 outrosVivos++;
-            }
         }
     }
 
-    // Vitória dos cidadãos
-    if(assassinosVivos == 0) {
-
+    if (assassinosVivos == 0) {
         cout << "\n=================================\n";
         cout << "VITORIA DOS CIDADAOS!\n";
         cout << "Todos os assassinos foram eliminados.\n";
         cout << "=================================\n";
-
         return true;
     }
 
-    // Vitória dos assassinos
-    if(assassinosVivos >= outrosVivos) {
-
+    if (assassinosVivos >= outrosVivos) {
         cout << "\n=================================\n";
         cout << "VITORIA DOS ASSASSINOS!\n";
         cout << "Os assassinos dominaram a cidade.\n";
         cout << "=================================\n";
-
         return true;
     }
 
     return false;
 }
-
 void mostrarRegras() { 
     
     #ifdef _WIN32 
