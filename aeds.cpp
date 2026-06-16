@@ -65,7 +65,7 @@ int quantidadeRodadas = 0;
 
 void cadastrarJogadores(); // (D): Feito!
 
-void iniciarPartida(); //Marcelo/Tiago: Temporario
+void iniciarPartida(); //Marcelo/Tiago: Feito!
 
 void distribuirFuncoes();  // Marcelo: Feito!
 
@@ -77,11 +77,11 @@ int lerInteiro();            // Marcelo: trata entrada inválida (letras etc)
 
 void limparTela(); //Marcelo
 
-void executarNoite(); // [T]:
+void executarNoite(); // [T]: Feito!
 
-void executarDia(); // [T]:
+void executarDia(); // [T]: Feito!
 
-void realizarVotacao(); // [T]:
+void realizarVotacao(); // [T]: Feito!
 
 bool verificarVitoria(); // (D): Feito!
 
