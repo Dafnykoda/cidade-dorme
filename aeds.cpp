@@ -65,17 +65,17 @@ int quantidadeRodadas = 0;
 
 void cadastrarJogadores(); // (D): Feito!
 
-void iniciarPartida(); //Marcelo: Temporario
+void iniciarPartida(); //Marcelo/Tiago: Temporario
 
 void distribuirFuncoes();  // Marcelo: Feito!
 
 void mostrarFuncaoJogadores();  // Marcelo: Feito!
 
-void executarNoite(); 
+void executarNoite(); // Tiago: Temporario
 
-void executarDia(); 
+void executarDia(); // Tiago: Temporario
 
-void realizarVotacao(); // (A):
+void realizarVotacao(); // Tiago: Temporario
 
 bool verificarVitoria(); // (D): Feito!
 
@@ -292,6 +292,177 @@ void mostrarFuncaoJogadores() { //Marcelo: Cada jogador vê sua própia função
     }
 }
 
+void executarNoite() {
+
+    // Zera estados da rodada
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        jogadores[i].protegido = false;
+        jogadores[i].votosRecebidos = 0; // votos serão usados na votação
+        // suspeita pode ser mantida/alterada se você quiser
+    }
+
+    // Estrutura de texto para histórico
+    historico[quantidadeRodadas].rodada = quantidadeRodadas;
+    historico[quantidadeRodadas].noite.clear();
+
+    // MEDICO: protege alguém (se vivo)
+
+    int medicoIndex = -1;
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo && jogadores[i].funcao == MEDICO) {
+            medicoIndex = i;
+            break;
+        }
+    }
+
+    if (medicoIndex != -1) {
+        // Sem interface: sorteia automaticamente um alvo vivo (projeto pode evoluir para entrada manual)
+        int alvo = -1;
+        while (alvo == -1 || !jogadores[alvo].vivo || alvo == medicoIndex) {
+            alvo = rand() % quantidadeJogadores;
+        }
+        jogadores[alvo].protegido = true;
+
+        historico[quantidadeRodadas].noite +=
+            "Noite: Medico protegeu " + jogadores[alvo].nome + ".\n";
+    } else {
+        historico[quantidadeRodadas].noite += "Noite: Medico ja nao existe.\n";
+    }
+
+    // ASSASSINO: escolhe alvo
+
+    int assassinoIndex = -1; // pode haver mais de um; aqui escolhemos um "representante" para escolher alvo
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo && jogadores[i].funcao == ASSASSINO) {
+            assassinoIndex = i;
+            break;
+        }
+    }
+
+    if (assassinoIndex != -1) {
+        int alvo = -1;
+        // alvo não pode ser assassino em si (e preferimos que seja vivo)
+        while (alvo == -1 || !jogadores[alvo].vivo || jogadores[alvo].funcao == ASSASSINO) {
+            alvo = rand() % quantidadeJogadores;
+        }
+
+        // Se alvo estiver protegido, assassino falha
+        if (jogadores[alvo].protegido) {
+            historico[quantidadeRodadas].noite +=
+                "Noite: Assassinos tentaram matar " + jogadores[alvo].nome + ", mas o Medico protegeu!\n";
+        } else {
+            jogadores[alvo].vivo = false;
+            historico[quantidadeRodadas].noite +=
+                "Noite: Assassinos mataram " + jogadores[alvo].nome + ".\n";
+        }
+    } else {
+        historico[quantidadeRodadas].noite += "Noite: Nao ha assassinos vivos.\n";
+    }
+
+
+    // VIDENTE:
+
+    int videnteIndex = -1;
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo && jogadores[i].funcao == VIDENTE) {
+            videnteIndex = i;
+            break;
+        }
+    }
+
+    if (videnteIndex != -1) {
+        int alvo = -1;
+        while (alvo == -1 || !jogadores[alvo].vivo || alvo == videnteIndex) {
+            alvo = rand() % quantidadeJogadores;
+        }
+        bool éAssassino = (jogadores[alvo].funcao == ASSASSINO);
+
+        historico[quantidadeRodadas].noite +=
+            "Noite: Vidente olhou " + jogadores[alvo].nome + " e viu que era " +
+            (éAssassino ? "ASSASSINO.\n" : "CIDADAO.\n");
+    }
+
+    cout << "\n====== NOITE " << quantidadeRodadas << " ======\n";
+    cout << historico[quantidadeRodadas].noite;
+}
+
+void executarDia() {
+    historico[quantidadeRodadas].dia.clear();
+
+    cout << "\n====== DIA " << quantidadeRodadas << " ======\n";
+
+    // A morte da noite já aconteceu; agora coletamos mortos nesta rodada
+    // (para simplificar, varremos os que estão vivos vs antes; como não temos antes, apenas descrevemos o estado atual)
+    int vivos = 0;
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo) vivos++;
+    }
+
+    historico[quantidadeRodadas].dia +=
+        "Dia: Existem " + to_string(vivos) + " jogadores vivos no momento.\n";
+
+    cout << historico[quantidadeRodadas].dia;
+
+    cout << "Pressione ENTER para votar.\n";
+    cin.ignore();
+    cin.get();
+}
+
+void realizarVotacao() {
+    historico[quantidadeRodadas].votacao.clear();
+
+    cout << "\n====== VOTACAO " << quantidadeRodadas << " ======\n";
+
+    // Reset votos
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        jogadores[i].votosRecebidos = 0;
+    }
+
+    // Cada jogador vivo vota automaticamente em outro vivo aleatório
+    for (int votante = 0; votante < quantidadeJogadores; votante++) {
+        if (!jogadores[votante].vivo) continue;
+
+        int alvo = -1;
+        while (alvo == -1 || !jogadores[alvo].vivo || alvo == votante) {
+            alvo = rand() % quantidadeJogadores;
+        }
+        jogadores[alvo].votosRecebidos++;
+    }
+
+    // Encontrar maior votação
+    int maior = -1;
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo && jogadores[i].votosRecebidos > maior) {
+            maior = jogadores[i].votosRecebidos;
+        }
+    }
+
+    // Possíveis empatados
+    int empateIndices[MAX_JOGADORES];
+    int qtdEmpate = 0;
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo && jogadores[i].votosRecebidos == maior) {
+            empateIndices[qtdEmpate++] = i;
+        }
+    }
+
+    // Desempate aleatório
+    int escolhido = empateIndices[rand() % qtdEmpate];
+    jogadores[escolhido].vivo = false;
+
+    // Montar histórico
+    historico[quantidadeRodadas].votacao += "Resultado da votacao:\n";
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].votosRecebidos > 0) {
+            historico[quantidadeRodadas].votacao +=
+                " - " + jogadores[i].nome + ": " + to_string(jogadores[i].votosRecebidos) + " voto(s)\n";
+        }
+    }
+    historico[quantidadeRodadas].votacao +=
+        "Eliminado no dia: " + jogadores[escolhido].nome + ".\n";
+
+    cout << historico[quantidadeRodadas].votacao;
+}
 
 bool verificarVitoria() {
 
@@ -424,6 +595,14 @@ void iniciarPartida() {
 
     quantidadeRodadas = 0;
 
+    // Reset de estados de jogadores caso inicie nova partida sem cadastrar de novo
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        jogadores[i].vivo = true;
+        jogadores[i].votosRecebidos = 0;
+        jogadores[i].protegido = false;
+        jogadores[i].suspeita = 0;
+    }
+
     distribuirFuncoes();
 
     mostrarFuncaoJogadores();
@@ -431,23 +610,34 @@ void iniciarPartida() {
     cout << "\nTodas as funcoes foram distribuidas!\n";
     cout << "A partida esta pronta para comecar.\n";
 
-    // futuramente:
-    // while(!verificarVitoria())
-    // {
-    //     executarNoite();
-    //     executarDia();
-    //     realizarVotacao();
-    // }
-
-    // Para teste:
-    for(int i = 0; i < quantidadeJogadores; i++) {
-
-        if(jogadores[i].funcao == ASSASSINO) {
-            jogadores[i].vivo = false;
+   // Loop principal do jogo
+    while (true) {
+        quantidadeRodadas++;
+        if (quantidadeRodadas > 30) {
+            // Segurança: evita estourar o histórico
+            cout << "\n[Limite de rodadas atingido]\n";
+            break;
         }
-    }
-    verificarVitoria();
 
+        executarNoite();
+        if (verificarVitoria()) break;
+
+        executarDia();
+        realizarVotacao();
+        if (verificarVitoria()) break;
+
+        // Exibir um pequeno resumo da rodada
+        cout << "\n\n>>> Fim da Rodada " << quantidadeRodadas << " <<<\n";
+        cout << "Pressione ENTER para continuar...";
+        cin.ignore();
+        cin.get();
+    }
+
+    // Relatório final
+
+    // Limpa histórico e permite nova partida
+    limparPartida();
+    cout << "\nVoltando ao menu principal...\n";
 }
 
 void mostrarHistorico() {
