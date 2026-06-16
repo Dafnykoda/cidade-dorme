@@ -77,7 +77,7 @@ void executarDia();
 
 void realizarVotacao();
 
-bool verificarVitoria();
+bool verificarVitoria(); // (D): Feito!
 
 void mostrarHistorico();
 
@@ -292,6 +292,64 @@ void mostrarFuncaoJogadores() { //Marcelo: Cada jogador vê sua própia função
     }
 }
 
+
+bool verificarVitoria() {
+
+    /*
+    Esta função verifica se alguma das condições de vitória do jogo foi atingida.
+
+    Vitória dos cidadãos:
+    - Ocorre quando todos os assassinos são eliminados.
+
+    Vitória dos assassinos:
+    - Ocorre quando a quantidade de assassinos vivos é igual ou superior à quantidade dos demais jogadores vivos.
+
+    A função retorna:
+    true  -> partida encerrada.
+    false -> partida continua.
+    */
+
+    int assassinosVivos = 0;
+    int outrosVivos = 0;
+
+    for(int i = 0; i < quantidadeJogadores; i++) {
+
+        if(jogadores[i].vivo) {
+
+            if(jogadores[i].funcao == ASSASSINO) {
+                assassinosVivos++;
+            }
+            else {
+                outrosVivos++;
+            }
+        }
+    }
+
+    // Vitória dos cidadãos
+    if(assassinosVivos == 0) {
+
+        cout << "\n=================================\n";
+        cout << "VITORIA DOS CIDADAOS!\n";
+        cout << "Todos os assassinos foram eliminados.\n";
+        cout << "=================================\n";
+
+        return true;
+    }
+
+    // Vitória dos assassinos
+    if(assassinosVivos >= outrosVivos) {
+
+        cout << "\n=================================\n";
+        cout << "VITORIA DOS ASSASSINOS!\n";
+        cout << "Os assassinos dominaram a cidade.\n";
+        cout << "=================================\n";
+
+        return true;
+    }
+
+    return false;
+}
+
 // ================= FUNÇÕES TEMPORÁRIAS =================
 /*
 (D)OBS: As funções abaixo foram criadas temporariamente para permitir a compilação
@@ -314,6 +372,8 @@ void iniciarPartida() {
     distribuirFuncoes();
 
     mostrarFuncaoJogadores();
+
+    verificarVitoria(); // Será utilizada durante o ciclo principal da partida
 
     cout << "\nTodas as funcoes foram distribuidas!\n";
     cout << "A partida esta pronta para comecar.\n";
