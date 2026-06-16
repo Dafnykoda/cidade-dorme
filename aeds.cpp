@@ -373,8 +373,6 @@ void iniciarPartida() {
 
     mostrarFuncaoJogadores();
 
-    verificarVitoria(); // Será utilizada durante o ciclo principal da partida
-
     cout << "\nTodas as funcoes foram distribuidas!\n";
     cout << "A partida esta pronta para comecar.\n";
 
@@ -385,6 +383,15 @@ void iniciarPartida() {
     //     executarDia();
     //     realizarVotacao();
     // }
+
+    // Para teste:
+    for(int i = 0; i < quantidadeJogadores; i++) {
+
+        if(jogadores[i].funcao == ASSASSINO) {
+            jogadores[i].vivo = false;
+        }
+    }
+    verificarVitoria();
 
 }
 
