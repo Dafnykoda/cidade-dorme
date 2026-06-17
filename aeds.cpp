@@ -2,10 +2,10 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
-#include <clocale>
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#include <clocale> /* configura console do windows em UTF-8 */
+#ifdef _WIN32  /* configura console do windows em UTF-8 */
+#include <windows.h>  /* configura console do windows em UTF-8 */
+#endif   /* configura console do windows em UTF-8 */
 using namespace std;
 
 // ================= ENUMS =================
@@ -85,13 +85,13 @@ void inicializarMatrizesHistorico();
 // ================= MAIN =================
 
 int main() {
-    configurarConsole();
+    configurarConsole(); //configura console em UTF-8
     srand(time(NULL));
     menuPrincipal();
     return 0;
 }
 
-void configurarConsole() {
+void configurarConsole() { //configura console em UTF-8
     setlocale(LC_ALL, "");
 
     #ifdef _WIN32
