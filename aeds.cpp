@@ -278,9 +278,9 @@ void mostrarFuncaoJogadores() { // Marcelo: Cada jogador vê sua própria funç�
         else if (jogadores[i].funcao == MEDICO)
             cout << "[Dica] Voce e o Medico. Na noite, escolha alguem para proteger.\n";
         else if (jogadores[i].funcao == VIDENTE)
-            cout << "[Dica] Voce e o Vidente. Na noite, investigue a funcao de alguem.\n";
+            cout << "[Dica] Voce e o Vidente. Na noite, escolha um jogador para ver a funcao.\n";
         else
-            cout << "[Dica] Voce e um Cidadao. Use bem seu voto durante o dia!\n";
+            cout << "[Dica] Durante o dia, voce discute com a aldeia sobre quem pode ser um assassino e escolhe alguem para linchar!\n";
 
         cout << "\nPressione ENTER para esconder e passar para o proximo...";
         cin.get();
@@ -304,6 +304,8 @@ void executarNoite() {
 
     cout << "\n====== NOITE " << quantidadeRodadas << " ======\n";
     cout << "A cidade adormece...\n";
+    cout << "Todos os jogadores fecham os olhos e vão dormim.\n";
+    cout << "O(s) assassino(s) preparam o ataque.\n";
     cout << "Pressione ENTER...";
     cin.get();
 
@@ -554,21 +556,9 @@ void executarDia() {
 
     // Narra resultado da noite
     cout << "[ RESULTADO DA NOITE ]\n";
-    cout << historico[quantidadeRodadas].noite;
-
-    // Mostra jogadores vivos
-    int vivos = 0;
-    cout << "\n[ JOGADORES VIVOS ]\n";
-    for (int i = 0; i < quantidadeJogadores; i++) {
-        if (jogadores[i].vivo) {
-            cout << i + 1 << " - " << jogadores[i].nome << "\n";
-            vivos++;
-        }
-    }
-    cout << "\nTotal: " << vivos << " jogadores vivos.\n";
 
     // Mostra eliminados com função revelada
-    cout << "\n[ JOGADORES ELIMINADOS ]\n";
+    cout << "\n== JOGADORES ELIMINADOS ==\n";
     bool algum = false;
     for (int i = 0; i < quantidadeJogadores; i++) {
         if (!jogadores[i].vivo) {
@@ -576,8 +566,18 @@ void executarDia() {
                  << " (" << nomeFuncao(jogadores[i].funcao) << ")\n";
             algum = true;
         }
+    } if (!algum) cout << "Nenhum ate agora.\n";
+
+    // Mostra jogadores vivos
+    int vivos = 0;
+    cout << "\n== JOGADORES VIVOS ==\n";
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (jogadores[i].vivo) {
+            cout << i + 1 << " - " << jogadores[i].nome << "\n";
+            vivos++;
+        }
     }
-    if (!algum) cout << "Nenhum ate agora.\n";
+    cout << "\nTotal: " << vivos << " jogadores vivos.\n";
 
     historico[quantidadeRodadas].dia =
         "Dia: " + to_string(vivos) + " jogadores vivos.";
