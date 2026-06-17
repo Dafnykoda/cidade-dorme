@@ -257,6 +257,7 @@ void mostrarFuncaoJogadores() { // Marcelo: Cada jogador vê sua própria funç�
 // ================= NOITE =================
 
 void executarNoite() {
+
     // Zera estados da rodada
     for (int i = 0; i < quantidadeJogadores; i++) {
         jogadores[i].protegido = false;
@@ -268,162 +269,209 @@ void executarNoite() {
 
     cout << "\n====== NOITE " << quantidadeRodadas << " ======\n";
     cout << "A cidade adormece...\n";
+    cout << "Pressione ENTER...";
+    cin.ignore(1000, '\n');
+    cin.get();
 
-    // ----- MÉDICOS -----
-    for (int i = 0; i < quantidadeJogadores; i++) {
-        if (!jogadores[i].vivo || jogadores[i].funcao != MEDICO) continue;
-
-        limparTela();
-        cout << "\n[ MEDICO ] " << jogadores[i].nome << ", e sua vez.\n";
-        cout << "Pressione ENTER para agir em segredo...";
-        cin.get();
-
-        cout << "\nJogadores vivos (escolha quem proteger):\n";
-        for (int j = 0; j < quantidadeJogadores; j++)
-            if (jogadores[j].vivo)
-                cout << j + 1 << " - " << jogadores[j].nome << "\n";
-
-        int escolha;
-        do {
-            cout << "\nDigite o numero do jogador que deseja proteger: ";
-            escolha = lerInteiro() - 1;
-            if (escolha < 0 || escolha >= quantidadeJogadores || !jogadores[escolha].vivo)
-                cout << "Escolha invalida. Tente novamente.\n";
-            else
-                break;
-        } while (true);
-
-        jogadores[escolha].protegido = true;
-        historico[quantidadeRodadas].noite +=
-            "Noite: Medico protegeu " + jogadores[escolha].nome + ".\n";
-
-        cout << "\nProtecao registrada. Pressione ENTER para ocultar...";
-        cin.get();
-        limparTela();
-    }
-
-    // ----- ASSASSINOS -----
-    /*
-    Cada assassino vivo escolhe individualmente um alvo.
-    A resolução segue os 4 casos da proposta:
-    Caso 1: nenhum alvo protegido → sorteio entre os alvos, 1 morre
-    Caso 2: apenas um alvo protegido → o não protegido morre
-    Caso 3: ambos protegidos → ninguém morre
-    Caso 4: ambos escolheram o mesmo alvo → ataque prioritário
-    */
     int alvosAssassinos[2] = {-1, -1};
     int contAssassinos = 0;
 
+    // ORDEM DE CADASTRO DOS JOGADORES
     for (int i = 0; i < quantidadeJogadores; i++) {
-        if (!jogadores[i].vivo || jogadores[i].funcao != ASSASSINO) continue;
-        if (contAssassinos >= 2) break;
+
+        if (!jogadores[i].vivo)
+            continue;
 
         limparTela();
-        cout << "\n[ ASSASSINO ] " << jogadores[i].nome << ", e sua vez.\n";
-        cout << "Pressione ENTER para agir em segredo...";
+
+        cout << "\n=================================\n";
+        cout << "VEZ DE " << jogadores[i].nome << "\n";
+        cout << "=================================\n";
+        cout << "Pressione ENTER para agir...";
         cin.get();
 
-        cout << "\nJogadores vivos (escolha sua vitima):\n";
-        for (int j = 0; j < quantidadeJogadores; j++)
-            if (jogadores[j].vivo && j != i)
-                cout << j + 1 << " - " << jogadores[j].nome << "\n";
+        switch (jogadores[i].funcao) {
 
-        int escolha;
-        do {
-            cout << "\nDigite o numero do jogador que deseja atacar: ";
-            escolha = lerInteiro() - 1;
-            if (escolha < 0 || escolha >= quantidadeJogadores || !jogadores[escolha].vivo || escolha == i)
-                cout << "Escolha invalida. Tente novamente.\n";
-            else
+            case MEDICO:
+            {
+                cout << "\n[ MEDICO ]\n";
+                cout << "\nJogadores vivos:\n";
+
+                for (int j = 0; j < quantidadeJogadores; j++) {
+                    if (jogadores[j].vivo)
+                        cout << j + 1 << " - " << jogadores[j].nome << "\n";
+                }
+
+                int escolha;
+
+                do {
+                    cout << "\nQuem deseja proteger? ";
+                    escolha = lerInteiro() - 1;
+
+                    if (escolha < 0 ||
+                        escolha >= quantidadeJogadores ||
+                        !jogadores[escolha].vivo)
+                    {
+                        cout << "Escolha invalida.\n";
+                    } else {
+                        break;
+                    }
+
+                } while (true);
+
+                jogadores[escolha].protegido = true;
+
+                historico[quantidadeRodadas].noite +=
+                    "Medico protegeu " +
+                    jogadores[escolha].nome + ".\n";
+
                 break;
-        } while (true);
+            }
 
-        alvosAssassinos[contAssassinos++] = escolha;
+            case ASSASSINO:
+            {
+                cout << "\n[ ASSASSINO ]\n";
+                cout << "\nJogadores vivos:\n";
 
-        cout << "\nAlvo registrado. Pressione ENTER para ocultar...";
-        cin.get();
+                for (int j = 0; j < quantidadeJogadores; j++) {
+                    if (jogadores[j].vivo && j != i)
+                        cout << j + 1 << " - " << jogadores[j].nome << "\n";
+                }
+
+                int escolha;
+
+                do {
+                    cout << "\nQuem deseja atacar? ";
+                    escolha = lerInteiro() - 1;
+
+                    if (escolha < 0 ||
+                        escolha >= quantidadeJogadores ||
+                        !jogadores[escolha].vivo ||
+                        escolha == i)
+                    {
+                        cout << "Escolha invalida.\n";
+                    } else {
+                        break;
+                    }
+
+                } while (true);
+
+                if (contAssassinos < 2)
+                    alvosAssassinos[contAssassinos++] = escolha;
+
+                break;
+            }
+
+            case VIDENTE:
+            {
+                cout << "\n[ VIDENTE ]\n";
+                cout << "\nJogadores vivos:\n";
+
+                for (int j = 0; j < quantidadeJogadores; j++) {
+                    if (jogadores[j].vivo && j != i)
+                        cout << j + 1 << " - " << jogadores[j].nome << "\n";
+                }
+
+                int escolha;
+
+                do {
+                    cout << "\nQuem deseja investigar? ";
+                    escolha = lerInteiro() - 1;
+
+                    if (escolha < 0 ||
+                        escolha >= quantidadeJogadores ||
+                        !jogadores[escolha].vivo ||
+                        escolha == i)
+                    {
+                        cout << "Escolha invalida.\n";
+                    } else {
+                        break;
+                    }
+
+                } while (true);
+
+                cout << "\n>>> "
+                     << jogadores[escolha].nome
+                     << " e "
+                     << nomeFuncao(jogadores[escolha].funcao)
+                     << " <<<\n";
+
+                historico[quantidadeRodadas].noite +=
+                    "Vidente investigou " +
+                    jogadores[escolha].nome + ".\n";
+
+                cout << "\nPressione ENTER...";
+                cin.ignore(1000, '\n');
+                cin.get();
+
+                break;
+            }
+
+            case CIDADAO:
+            {
+                cout << "\n[ CIDADAO ]\n";
+                cout << "Voce nao possui acao noturna.\n";
+                cout << "Pressione ENTER...";
+                cin.get();
+
+                break;
+            }
+        }
+
         limparTela();
     }
 
-    // Resolução dos ataques
+    // RESOLUCAO DOS ATAQUES
+
     int eliminado = -1;
 
     if (contAssassinos == 1) {
+
         if (!jogadores[alvosAssassinos[0]].protegido)
             eliminado = alvosAssassinos[0];
-    } else if (contAssassinos == 2) {
+
+    }
+    else if (contAssassinos == 2) {
+
         int alvo1 = alvosAssassinos[0];
         int alvo2 = alvosAssassinos[1];
 
         if (alvo1 == alvo2) {
-            // Caso 4: mesmo alvo — ataque prioritário
+
             if (!jogadores[alvo1].protegido)
                 eliminado = alvo1;
-        } else {
+        }
+        else {
+
             bool prot1 = jogadores[alvo1].protegido;
             bool prot2 = jogadores[alvo2].protegido;
 
             if (!prot1 && !prot2) {
-                // Caso 1: sorteia
                 eliminado = alvosAssassinos[rand() % 2];
-            } else if (!prot1) {
-                // Caso 2
+            }
+            else if (!prot1) {
                 eliminado = alvo1;
-            } else if (!prot2) {
-                // Caso 2
+            }
+            else if (!prot2) {
                 eliminado = alvo2;
             }
-            // Caso 3: ambos protegidos → eliminado permanece -1
         }
     }
 
     if (eliminado != -1) {
+
         jogadores[eliminado].vivo = false;
+
         historico[quantidadeRodadas].noite +=
-            "Noite: Assassinos mataram " + jogadores[eliminado].nome + ".\n";
-    } else {
-        historico[quantidadeRodadas].noite +=
-            "Noite: Nenhum jogador foi eliminado (alvo protegido ou sem assassinos).\n";
+            "Assassinos eliminaram " +
+            jogadores[eliminado].nome + ".\n";
     }
-
-    // ----- VIDENTE -----
-    for (int i = 0; i < quantidadeJogadores; i++) {
-        if (!jogadores[i].vivo || jogadores[i].funcao != VIDENTE) continue;
-
-        limparTela();
-        cout << "\n[ VIDENTE ] " << jogadores[i].nome << ", e sua vez.\n";
-        cout << "Pressione ENTER para agir em segredo...";
-        cin.get();
-
-        cout << "\nJogadores vivos (escolha quem investigar):\n";
-        for (int j = 0; j < quantidadeJogadores; j++)
-            if (jogadores[j].vivo && j != i)
-                cout << j + 1 << " - " << jogadores[j].nome << "\n";
-
-        int escolha;
-        do {
-            cout << "\nDigite o numero do jogador que deseja investigar: ";
-            escolha = lerInteiro() - 1;
-            if (escolha < 0 || escolha >= quantidadeJogadores || !jogadores[escolha].vivo || escolha == i)
-                cout << "Escolha invalida. Tente novamente.\n";
-            else
-                break;
-        } while (true);
-
-        cout << "\n>>> " << jogadores[escolha].nome
-             << " e: " << nomeFuncao(jogadores[escolha].funcao) << " <<<\n";
+    else {
 
         historico[quantidadeRodadas].noite +=
-            "Noite: Vidente investigou " + jogadores[escolha].nome +
-            " (" + nomeFuncao(jogadores[escolha].funcao) + ").\n";
-
-        cout << "\nPressione ENTER para ocultar...";
-        cin.get();
-        limparTela();
-        break; // só existe 1 vidente
+            "Nenhum jogador foi eliminado nesta noite.\n";
     }
 }
-
 // ================= DIA =================
 
 void executarDia() {
@@ -720,7 +768,7 @@ void mostrarRegras() {
     cout << "  votos corretos;\n";
     cout << "  votos incorretos;\n";
     cout << "  apoio a assassinos;\n";
-    cout << "  elimincao de cidadaos;\n";
+    cout << "  eliminacao de cidadaos;\n";
     cout << "  eliminacao de assassinos.\n";
     cout << "  Essa pontuacao sera mostrada no final da partida.\n\n";
  
