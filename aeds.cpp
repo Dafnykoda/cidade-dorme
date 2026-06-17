@@ -68,6 +68,7 @@ void mostrarHistorico();
 void mostrarRegras();        // (A): Feito!
 void relatorioFinal();
 void limparPartida();        // (A): Feito!
+void limparhistorico();      //Hugo
 
 // ================= MAIN =================
 
@@ -147,7 +148,7 @@ void cadastrarJogadores() {
             cout << "\nQuantidade invalida! Digite entre 6 a 10 jogadores.\n";
     } while (quantidadeJogadores < 6 || quantidadeJogadores > 10);
 
-    cin.ignore();
+    cin.ignore(1000, '\n');
 
     for (int i = 0; i < quantidadeJogadores; i++) {
         cout << "\nNome do jogador " << i + 1 << ": ";
@@ -689,7 +690,7 @@ void mostrarRegras() {
     cout << "  - Cidadaos, Medicos e Videntes: Devem descobrir\n";
     cout << "    quem sao os assassinos e elimina-los na votacao.\n";
     cout << "  - Assassinos: Devem eliminar os outros jogadores\n";
-    cout << "    ate que fiquem em numero igual ou maior que eles.\n\n";
+    cout << "    ate que fiquem em numero igual ou menor que eles.\n\n";
  
     cout << "--------------------------------------------------\n";
  
@@ -726,7 +727,7 @@ void mostrarRegras() {
     cout << "==================================================\n";
  
     cout << "Pressione ENTER para voltar ao menu principal.";
-    cin.ignore();
+    cin.ignore(1000, '\n');
     cin.get();
 }
  
@@ -742,7 +743,11 @@ void limparPartida() {
         jogadores[i].protegido = false;
         jogadores[i].suspeita = 0;
     }
+}
 
+//Hugo: Limpar histórico
+
+void limparhistorico(){
     // Hugo: Limpar histórico
 
         for(int i = 0; i < 30; i++){
@@ -750,5 +755,5 @@ void limparPartida() {
     historico[i].noite = "";
     historico[i].dia = "";
     historico[i].votacao = "";
-    }
+        }
 }
