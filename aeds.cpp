@@ -43,12 +43,18 @@ struct HistoricoRodada { // Serve para registrar tudo o que aconteceu em cada ro
 // ================= VARIÁVEIS GLOBAIS =================
 
 const int MAX_JOGADORES = 10;
+const int MAX_RODADAS = 30;
 
 Jogador jogadores[MAX_JOGADORES];
-HistoricoRodada historico[30];
+HistoricoRodada historico[MAX_RODADAS + 1];
+
+// Matrizes do historico: linhas = rodadas, colunas = jogadores.
+int matrizVotosRecebidos[MAX_RODADAS + 1][MAX_JOGADORES];
+int matrizAlvoVoto[MAX_RODADAS + 1][MAX_JOGADORES];
 
 int quantidadeJogadores = 0;
 int quantidadeRodadas = 0;
+string vencedorPartida = "";
 
 // ================= PROTÓTIPOS =================
 
@@ -69,6 +75,7 @@ void mostrarRegras();        // (A): Feito!
 void relatorioFinal();
 void limparPartida();        // (A): Feito!
 void limparhistorico();      //Hugo
+void inicializarMatrizesHistorico();
 
 // ================= MAIN =================
 
@@ -325,7 +332,7 @@ limparTela();
                 cout << "\nJogadores vivos:\n";
 
                 for (int j = 0; j < quantidadeJogadores; j++) {
-                    if (jogadores[j].vivo)
+                    if (jogadores[j].vivo && j != i)
                         cout << j + 1 << " - " << jogadores[j].nome << "\n";
                 }
 
@@ -337,15 +344,17 @@ limparTela();
 
                     if (escolha < 0 ||
                         escolha >= quantidadeJogadores ||
-                        !jogadores[escolha].vivo)
+                        !jogadores[escolha].vivo ||
+                        escolha == i)
                     {
-                        cout << "Escolha invalida.\n";
+                        cout << "Escolha invalida. O medico nao pode proteger a si mesmo.\n";
                     } else {
                         break;
                     }
 
                 } while (true);
 
+                cin.ignore(1000, '\n');
                 jogadores[escolha].protegido = true;
 
                 historico[quantidadeRodadas].noite +=
@@ -361,7 +370,7 @@ limparTela();
                 cout << "\nJogadores vivos:\n";
 
                 for (int j = 0; j < quantidadeJogadores; j++) {
-                    if (jogadores[j].vivo && j != i)
+                    if (jogadores[j].vivo && jogadores[j].funcao != ASSASSINO)
                         cout << j + 1 << " - " << jogadores[j].nome << "\n";
                 }
 
@@ -374,17 +383,22 @@ limparTela();
                     if (escolha < 0 ||
                         escolha >= quantidadeJogadores ||
                         !jogadores[escolha].vivo ||
-                        escolha == i)
+                        jogadores[escolha].funcao == ASSASSINO)
                     {
-                        cout << "Escolha invalida.\n";
+                        cout << "Escolha invalida. Assassinos nao podem atacar assassinos.\n";
                     } else {
                         break;
                     }
 
                 } while (true);
 
-                if (contAssassinos < 2)
+                cin.ignore(1000, '\n');
+                if (contAssassinos < 2) {
                     alvosAssassinos[contAssassinos++] = escolha;
+                    historico[quantidadeRodadas].noite +=
+                        "Assassino escolheu atacar " +
+                        jogadores[escolha].nome + ".\n";
+                }
 
                 break;
             }
@@ -417,6 +431,7 @@ limparTela();
 
                 } while (true);
 
+                cin.ignore(1000, '\n');
                 cout << "\n>>> "
                      << jogadores[escolha].nome
                      << " e "
@@ -428,7 +443,6 @@ limparTela();
                     jogadores[escolha].nome + ".\n";
 
                 cout << "\nPressione ENTER...";
-                cin.ignore(1000, '\n');
                 cin.get();
 
                 break;
@@ -454,8 +468,12 @@ limparTela();
 
     if (contAssassinos == 1) {
 
-        if (!jogadores[alvosAssassinos[0]].protegido)
+        if (!jogadores[alvosAssassinos[0]].protegido) {
             eliminado = alvosAssassinos[0];
+            historico[quantidadeRodadas].noite +=
+                "Sistema dos assassinos decidiu eliminar " +
+                jogadores[eliminado].nome + ".\n";
+        }
 
     }
     else if (contAssassinos == 2) {
@@ -465,8 +483,12 @@ limparTela();
 
         if (alvo1 == alvo2) {
 
-            if (!jogadores[alvo1].protegido)
+            if (!jogadores[alvo1].protegido) {
                 eliminado = alvo1;
+                historico[quantidadeRodadas].noite +=
+                    "Os assassinos escolheram o mesmo alvo. Sistema decidiu eliminar " +
+                    jogadores[eliminado].nome + ".\n";
+            }
         }
         else {
 
@@ -475,12 +497,21 @@ limparTela();
 
             if (!prot1 && !prot2) {
                 eliminado = alvosAssassinos[rand() % 2];
+                historico[quantidadeRodadas].noite +=
+                    "Sistema dos assassinos sorteou um dos alvos e decidiu eliminar " +
+                    jogadores[eliminado].nome + ".\n";
             }
             else if (!prot1) {
                 eliminado = alvo1;
+                historico[quantidadeRodadas].noite +=
+                    "Sistema dos assassinos escolheu o alvo sem protecao: " +
+                    jogadores[eliminado].nome + ".\n";
             }
             else if (!prot2) {
                 eliminado = alvo2;
+                historico[quantidadeRodadas].noite +=
+                    "Sistema dos assassinos escolheu o alvo sem protecao: " +
+                    jogadores[eliminado].nome + ".\n";
             }
         }
     }
@@ -555,8 +586,11 @@ void realizarVotacao() {
     cout << "\n====== VOTACAO " << quantidadeRodadas << " ======\n";
 
     // Reset votos
-    for (int i = 0; i < quantidadeJogadores; i++)
+    for (int i = 0; i < quantidadeJogadores; i++) {
         jogadores[i].votosRecebidos = 0;
+        matrizVotosRecebidos[quantidadeRodadas][i] = 0;
+        matrizAlvoVoto[quantidadeRodadas][i] = -1;
+    }
 
     // Cada jogador vivo vota
     for (int i = 0; i < quantidadeJogadores; i++) {
@@ -583,8 +617,10 @@ void realizarVotacao() {
         } while (true);
 
         jogadores[escolha].votosRecebidos++;
+        matrizAlvoVoto[quantidadeRodadas][i] = escolha;
 
         cout << "\nVoto registrado! Pressione ENTER para ocultar...";
+        cin.ignore(1000, '\n');
         cin.get();
         limparTela();
     }
@@ -605,19 +641,37 @@ void realizarVotacao() {
             empatados[contEmpatados++] = i;
 
     // Placar
-    for (int i = 0; i < quantidadeJogadores; i++)
-        if (jogadores[i].vivo)
+    string registroVotacao = "Placar: ";
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        matrizVotosRecebidos[quantidadeRodadas][i] = jogadores[i].votosRecebidos;
+
+        if (jogadores[i].vivo) {
             cout << jogadores[i].nome << ": " << jogadores[i].votosRecebidos << " voto(s)\n";
+            registroVotacao += jogadores[i].nome + "=" + to_string(jogadores[i].votosRecebidos) + " ";
+        }
+    }
 
     int eliminado;
-    string registroVotacao = "";
+    registroVotacao += "\n";
 
     if (contEmpatados > 1) {
         cout << "\nEmpate! Sorteando entre os mais votados...\n";
         eliminado = empatados[rand() % contEmpatados];
-        registroVotacao = "Empate. ";
+        registroVotacao += "Empate. ";
     } else {
         eliminado = empatados[0];
+    }
+
+    for (int i = 0; i < quantidadeJogadores; i++) {
+        if (matrizAlvoVoto[quantidadeRodadas][i] == -1)
+            continue;
+
+        if (matrizAlvoVoto[quantidadeRodadas][i] == eliminado) {
+            if (jogadores[eliminado].funcao == ASSASSINO)
+                jogadores[i].suspeita += 2;
+            else
+                jogadores[i].suspeita -= 1;
+        }
     }
 
     jogadores[eliminado].vivo = false;
@@ -655,17 +709,20 @@ bool verificarVitoria() {
     }
  
     if (assassinosVivos == 0) {
+        vencedorPartida = "CIDADAOS";
         cout << "\n=================================\n";
         cout << "VITORIA DOS CIDADAOS!\n";
         cout << "Todos os assassinos foram eliminados.\n";
+        cout << "Os cidadaos venceram!\n";
         cout << "=================================\n";
         return true;
     }
  
-    if (assassinosVivos >= outrosVivos) {
+    if (assassinosVivos > outrosVivos) {
+        vencedorPartida = "ASSASSINOS";
         cout << "\n=================================\n";
         cout << "VITORIA DOS ASSASSINOS!\n";
-        cout << "Os assassinos dominaram a cidade.\n";
+        cout << "A rodada final terminou e os assassinos venceram.\n";
         cout << "=================================\n";
         return true;
     }
@@ -679,6 +736,9 @@ void iniciarPartida() {
     cout << "\n===== INICIANDO PARTIDA =====\n";
  
     limparPartida();
+    limparhistorico();
+    inicializarMatrizesHistorico();
+    vencedorPartida = "";
     distribuirFuncoes();
     mostrarFuncaoJogadores();
  
@@ -689,7 +749,8 @@ void iniciarPartida() {
     while (true) {
         quantidadeRodadas++;
  
-        if (quantidadeRodadas > 30) {
+        if (quantidadeRodadas > MAX_RODADAS) {
+            quantidadeRodadas = MAX_RODADAS;
             cout << "\n[Limite de 30 rodadas atingido]\n";
             break;
         }
@@ -731,6 +792,8 @@ void iniciarPartida() {
         limparTela();
 
         realizarVotacao();
+
+        if (verificarVitoria()) break;
  
         cout << "\n>>> Fim da Rodada " << quantidadeRodadas << " <<<\n";
         cout << "Pressione ENTER para continuar...";
@@ -746,19 +809,24 @@ void relatorioFinal() {
     limparTela();
     cout << "\n======== RELATORIO FINAL ========\n";
     cout << "Total de rodadas: " << quantidadeRodadas << "\n\n";
+
+    if (vencedorPartida == "ASSASSINOS") {
+        cout << "Resultado: os assassinos venceram apos a rodada final.\n\n";
+    } else if (vencedorPartida == "CIDADAOS") {
+        cout << "Resultado: os assassinos foram eliminados. Os cidadaos venceram!\n\n";
+    }
  
     cout << "[ JOGADORES ]\n";
     for (int i = 0; i < quantidadeJogadores; i++) {
         cout << jogadores[i].nome
              << " | " << nomeFuncao(jogadores[i].funcao)
              << " | " << (jogadores[i].vivo ? "Vivo" : "Eliminado")
+             << " | Desempenho/Suspeita: " << jogadores[i].suspeita
              << "\n";
     }
  
     cout << "\nPressione ENTER para voltar ao menu...";
     cin.get();
- 
-    limparPartida();
     cout << "\nVoltando ao menu principal...\n";
 }
  
@@ -776,6 +844,20 @@ void mostrarHistorico() {
         cout << "Noite   : " << historico[i].noite;
         cout << "Dia     : " << historico[i].dia << "\n";
         cout << "Votacao : " << historico[i].votacao << "\n";
+
+        cout << "\nMatriz de votos recebidos na rodada " << i << ":\n";
+        for (int j = 0; j < quantidadeJogadores; j++) {
+            cout << jogadores[j].nome << ": "
+                 << matrizVotosRecebidos[i][j] << " voto(s)\n";
+        }
+
+        cout << "Quem votou em quem:\n";
+        for (int j = 0; j < quantidadeJogadores; j++) {
+            if (matrizAlvoVoto[i][j] != -1) {
+                cout << jogadores[j].nome << " -> "
+                     << jogadores[matrizAlvoVoto[i][j]].nome << "\n";
+            }
+        }
     }
 }
  
@@ -856,10 +938,19 @@ void limparPartida() {
 void limparhistorico(){
     // Hugo: Limpar histórico
 
-        for(int i = 0; i < 30; i++){
+        for(int i = 0; i <= MAX_RODADAS; i++){
     historico[i].rodada = 0;
     historico[i].noite = "";
     historico[i].dia = "";
     historico[i].votacao = "";
         }
+}
+
+void inicializarMatrizesHistorico() {
+    for (int i = 0; i <= MAX_RODADAS; i++) {
+        for (int j = 0; j < MAX_JOGADORES; j++) {
+            matrizVotosRecebidos[i][j] = 0;
+            matrizAlvoVoto[i][j] = -1;
+        }
+    }
 }
