@@ -240,6 +240,19 @@ void mostrarFuncaoJogadores() { // Marcelo: Cada jogador vê sua própria funç�
 
         if (jogadores[i].funcao == ASSASSINO)
             cout << "[Dica] Voce e um Assassino. Na noite, escolha uma vitima.\n";
+        if (jogadores[i].funcao == ASSASSINO) {
+
+            cout << "\nSeu parceiro será:\n";
+
+        for (int j = 0; j < quantidadeJogadores; j++) {
+
+        if (j != i &&
+            jogadores[j].funcao == ASSASSINO) {
+
+            cout << jogadores[j].nome << "\n";
+        }
+    }
+} 
         else if (jogadores[i].funcao == MEDICO)
             cout << "[Dica] Voce e o Medico. Na noite, escolha alguem para proteger.\n";
         else if (jogadores[i].funcao == VIDENTE)
@@ -282,12 +295,26 @@ void executarNoite() {
         if (!jogadores[i].vivo)
             continue;
 
-        limparTela();
+    limparTela();
+
+limparTela();
 
         cout << "\n=================================\n";
-        cout << "VEZ DE " << jogadores[i].nome << "\n";
+        cout << "          FASE NOTURNA\n";
         cout << "=================================\n";
-        cout << "Pressione ENTER para agir...";
+        cout << "\nE A VEZ DE: " << jogadores[i].nome << "\n";
+        cout << "\nPasse o computador para esse jogador.";
+        cout << "\nPressione ENTER para continuar...";
+        cin.ignore(1000, '\n');
+        cin.get();
+
+    limparTela();
+
+        cout << "\n=================================\n";
+        cout << "JOGADOR: " << jogadores[i].nome << "\n";
+        cout << "FUNCAO: " << nomeFuncao(jogadores[i].funcao) << "\n";
+        cout << "=================================\n";
+        cout << "\nPressione ENTER para realizar sua acao...";
         cin.get();
 
         switch (jogadores[i].funcao) {
@@ -668,11 +695,42 @@ void iniciarPartida() {
         }
  
         executarNoite();
-        if (verificarVitoria()) break;
- 
+
+        if (verificarVitoria()) break;   
+
+        limparTela();
+
+        cout << "\n=====================================\n";
+        cout << "FASE DIURNA\n";
+        cout << "=====================================\n";
+
+        cout << "\nA cidade desperta.\n";
+
+        cout << "\nPressione ENTER para continuar...";
+        cin.ignore(1000, '\n');
+        cin.get();
+
+        limparTela();
+
         executarDia();
-        realizarVotacao();
+
         if (verificarVitoria()) break;
+        
+        limparTela();
+
+        cout << "\n=====================================\n";
+        cout << "FASE DE VOTACAO\n";
+        cout << "=====================================\n";
+
+        cout << "\nA cidade desperta.\n";
+
+        cout << "\nOs jogadores devem discutir e escolher\nquem sera eliminado.\n";
+        cin.ignore(1000, '\n');
+        cin.get();
+
+        limparTela();
+
+        realizarVotacao();
  
         cout << "\n>>> Fim da Rodada " << quantidadeRodadas << " <<<\n";
         cout << "Pressione ENTER para continuar...";
