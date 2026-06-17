@@ -226,7 +226,7 @@ void distribuirFuncoes() { // Marcelo: Cria vetor temporario c/ todas funções 
 }
 
 void mostrarFuncaoJogadores() { // Marcelo: Cada jogador vê sua própria função.
-    cin.ignore();
+    cin.ignore(1000, '\n'); //Hugo: caso não exista nada no buffer
 
     for (int i = 0; i < quantidadeJogadores; i++) {
         limparTela();
@@ -707,6 +707,21 @@ void mostrarRegras() {
     cout << "  2o - DIA: A cidade acorda e descobre se houve alguma morte.\n";
     cout << "  3o - VOTACAO: Os jogadores discutem e votam para eliminar\n";
     cout << "       um suspeito. O mais votado sai do jogo.\n\n";
+
+        cout << "--------------------------------------------------\n";
+
+    // Hugo: Sistema de suspeita
+
+    cout << "  SISTEMA DE SUSPEITA:\n";
+
+    cout << "  Cada jogador possuira um indice de suspeita/desempenho.\n";
+    cout << "  Esse valor sera alterado confome:\n";
+    cout << "  votos corretos;\n";
+    cout << "  votos incorretos;\n";
+    cout << "  apoio a assassinos;\n";
+    cout << "  elimincao de cidadaos;\n";
+    cout << "  eliminacao de assassinos.\n";
+    cout << "  Essa pontuacao sera mostrada no final da partida.\n\n";
  
     cout << "==================================================\n";
  
@@ -726,5 +741,14 @@ void limparPartida() {
         jogadores[i].votosRecebidos = 0;
         jogadores[i].protegido = false;
         jogadores[i].suspeita = 0;
+    }
+
+    // Hugo: Limpar histórico
+
+        for(int i = 0; i < 30; i++){
+    historico[i].rodada = 0;
+    historico[i].noite = "";
+    historico[i].dia = "";
+    historico[i].votacao = "";
     }
 }
