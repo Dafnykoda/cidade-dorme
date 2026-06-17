@@ -2,6 +2,10 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <clocale>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 using namespace std;
 
 // ================= ENUMS =================
@@ -66,6 +70,7 @@ void mostrarFuncaoJogadores(); // Marcelo: Feito!
 string nomeFuncao(Personagem funcao); // Marcelo: Feito!
 int lerInteiro();            // Marcelo: trata entrada inválida (letras etc)
 void limparTela();
+void configurarConsole();
 void executarNoite();        // Tiago
 void executarDia();          // Tiago
 void realizarVotacao();      // Tiago
@@ -80,9 +85,19 @@ void inicializarMatrizesHistorico();
 // ================= MAIN =================
 
 int main() {
+    configurarConsole();
     srand(time(NULL));
     menuPrincipal();
     return 0;
+}
+
+void configurarConsole() {
+    setlocale(LC_ALL, "");
+
+    #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleCP(CP_UTF8);
+    #endif
 }
 
 // ================= MENU =================
@@ -249,7 +264,7 @@ void mostrarFuncaoJogadores() { // Marcelo: Cada jogador vê sua própria funç�
             cout << "[Dica] Voce e um Assassino. Na noite, escolha uma vitima.\n";
         if (jogadores[i].funcao == ASSASSINO) {
 
-            cout << "\nSeu parceiro será:\n";
+            cout << "\nSeu parceiro sera:\n";
 
         for (int j = 0; j < quantidadeJogadores; j++) {
 
@@ -290,7 +305,6 @@ void executarNoite() {
     cout << "\n====== NOITE " << quantidadeRodadas << " ======\n";
     cout << "A cidade adormece...\n";
     cout << "Pressione ENTER...";
-    cin.ignore(1000, '\n');
     cin.get();
 
     int alvosAssassinos[2] = {-1, -1};
@@ -312,7 +326,6 @@ limparTela();
         cout << "\nE A VEZ DE: " << jogadores[i].nome << "\n";
         cout << "\nPasse o computador para esse jogador.";
         cout << "\nPressione ENTER para continuar...";
-        cin.ignore(1000, '\n');
         cin.get();
 
     limparTela();
@@ -768,7 +781,6 @@ void iniciarPartida() {
         cout << "\nA cidade desperta.\n";
 
         cout << "\nPressione ENTER para continuar...";
-        cin.ignore(1000, '\n');
         cin.get();
 
         limparTela();
@@ -786,7 +798,6 @@ void iniciarPartida() {
         cout << "\nA cidade desperta.\n";
 
         cout << "\nOs jogadores devem discutir e escolher\nquem sera eliminado.\n";
-        cin.ignore(1000, '\n');
         cin.get();
 
         limparTela();
