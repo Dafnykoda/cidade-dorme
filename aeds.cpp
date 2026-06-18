@@ -10,7 +10,7 @@ using namespace std;
 
 // ================= ENUMS =================
 
-enum Personagem { // Dafny(D): Mudei o nome de "Função" para "Personagem" para não haver nomes repetidos durante o código.
+enum Personagem { // Papéis disponíveis no jogo.
     ASSASSINO,
     MEDICO,
     VIDENTE,
@@ -62,24 +62,24 @@ string vencedorPartida = "";
 
 // ================= PROTÓTIPOS =================
 
-void menuPrincipal();        // (D): Feito!
-void cadastrarJogadores();   // (D): Feito!
-void iniciarPartida();       // Marcelo/Tiago
-void distribuirFuncoes();    // Marcelo: Feito!
-void mostrarFuncaoJogadores(); // Marcelo: Feito!
-string nomeFuncao(Personagem funcao); // Marcelo: Feito!
-int lerInteiro();            // Marcelo: trata entrada inválida (letras etc)
+void menuPrincipal();
+void cadastrarJogadores();
+void iniciarPartida(); 
+void distribuirFuncoes(); 
+void mostrarFuncaoJogadores();
+string nomeFuncao(Personagem funcao);
+int lerInteiro();
 void limparTela();
 void configurarConsole();
-void executarNoite();        // Tiago
-void executarDia();          // Tiago
-void realizarVotacao();      // Tiago
-bool verificarVitoria();     // (D): Feito!
+void executarNoite(); 
+void executarDia(); 
+void realizarVotacao();
+bool verificarVitoria();
 void mostrarHistorico();
-void mostrarRegras();        // (A): Feito!
+void mostrarRegras();
 void relatorioFinal();
-void limparPartida();        // (A): Feito!
-void limparhistorico();      //Hugo
+void limparPartida();
+void limparhistorico();
 void inicializarMatrizesHistorico();
 
 // ================= MAIN =================
@@ -101,11 +101,6 @@ void configurarConsole() { //configura console em UTF-8
 }
 
 // ================= MENU =================
-/*
-OBS: A implementação da função menuPrincipal() está após a main() porque seu
-protótipo foi declarado anteriormente. Isso melhora a organização do código
-e mantém a função principal mais limpa e fácil de entender.
-*/
 
 void menuPrincipal() {
     int opcao;
@@ -125,10 +120,6 @@ void menuPrincipal() {
                 cadastrarJogadores();
                 break;
             case 2:
-                /*
-                OBS (D): Validação para impedir que uma partida seja iniciada sem que os
-                jogadores tenham sido cadastrados previamente.
-                */
                 if (quantidadeJogadores == 0) {
                     cout << "\nCadastre os jogadores antes de iniciar a partida!\n";
                 } else {
@@ -153,13 +144,6 @@ void menuPrincipal() {
 // ================= CADASTRO =================
 
 void cadastrarJogadores() {
-    /*
-    OBS (D): Esta função realiza o cadastro dos participantes da partida.
-    O sistema solicita a quantidade de jogadores, valida se o valor está
-    dentro do limite permitido (entre 6 e 10 jogadores) e registra os nomes.
-    Além disso, inicializa os atributos de cada jogador para garantir que
-    todos iniciem a partida com os mesmos estados padrão.
-    */
 
     cout << "\n====== CADASTRO DE JOGADORES ======\n";
 
@@ -189,7 +173,7 @@ void cadastrarJogadores() {
 
 // ================= UTILITÁRIOS =================
 
-string nomeFuncao(Personagem funcao) { // Marcelo: converte enum em texto
+string nomeFuncao(Personagem funcao) { // converte enum em texto
     switch (funcao) {
         case ASSASSINO: return "Assassino";
         case MEDICO:    return "Medico";
@@ -220,7 +204,7 @@ int lerInteiro() {
 
 // ================= DISTRIBUIÇÃO =================
 
-void distribuirFuncoes() { // Marcelo: Cria vetor temporario c/ todas funções -> Embaralha -> Copia para jogadores
+void distribuirFuncoes() { // Cria vetor temporario c/ todas funções -> Embaralha -> Copia para jogadores
     Personagem funcoes[MAX_JOGADORES];
     int pos = 0;
 
@@ -248,8 +232,8 @@ void distribuirFuncoes() { // Marcelo: Cria vetor temporario c/ todas funções 
         jogadores[i].funcao = funcoes[i];
 }
 
-void mostrarFuncaoJogadores() { // Marcelo: Cada jogador vê sua própria função.
-    cin.ignore(1000, '\n'); //Hugo: caso não exista nada no buffer
+void mostrarFuncaoJogadores() { // Cada jogador vê sua própria função.
+    cin.ignore(1000, '\n'); // caso não exista nada no buffer
 
     for (int i = 0; i < quantidadeJogadores; i++) {
         limparTela();
@@ -881,7 +865,7 @@ void mostrarRegras() {
         system("clear");
     #endif
  
-    // (A): Regras e Explicacao.
+    // Regras e Explicação.
  
     cout << "======== REGRAS DO JOGO: CIDADE DORME ======== \n\n";
  
@@ -910,7 +894,7 @@ void mostrarRegras() {
 
         cout << "--------------------------------------------------\n";
 
-    // Hugo: Sistema de suspeita
+    // Sistema de suspeita
 
     cout << "  SISTEMA DE SUSPEITA:\n";
 
@@ -933,7 +917,7 @@ void mostrarRegras() {
 // ================= LIMPAR PARTIDA =================
  
 void limparPartida() {
-    // (A): Limpa os dados da partida anterior.
+    // Limpa os dados da partida anterior.
     quantidadeRodadas = 0;
  
     for (int i = 0; i < quantidadeJogadores; i++) {
@@ -944,10 +928,10 @@ void limparPartida() {
     }
 }
 
-//Hugo: Limpar histórico
+// Limpar histórico
 
 void limparhistorico(){
-    // Hugo: Limpar histórico
+    // Limpar histórico
 
         for(int i = 0; i <= MAX_RODADAS; i++){
     historico[i].rodada = 0;
